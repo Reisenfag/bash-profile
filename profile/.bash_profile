@@ -21,3 +21,7 @@ if [ -f "$HOME/.profile" ]; then
     . "$HOME/.profile"
 fi
 
+# set PATH so it includes user's private bin if it exists
+__path_prepend "$HOME/.local/bin"
+__path_prepend "$HOME/bin"
+
