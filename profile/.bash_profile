@@ -1,3 +1,4 @@
+# function prepend path in $PATH if it exists and remove dublicates
 __path_prepend() {
     PATH=${PATH//":$1:"/:}     # delete all instances in the middle
     PATH=${PATH/%":$1"/}       # delete any instance at the end
