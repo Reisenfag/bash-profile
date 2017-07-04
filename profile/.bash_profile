@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # fancy terminal
 if [ -n "$COLORTERM" ]; then
     if [ -e /lib/terminfo/x/xterm?256color ] || [ -e /usr/share/terminfo/x/xterm?256color ]; then
