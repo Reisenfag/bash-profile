@@ -18,9 +18,11 @@ if [ -n "$COLORTERM" ]; then
     fi
 fi
 
-# include .profile if it exists
+# include .profile if it exists or .bashrc if it exists
 if [ -f "$HOME/.profile" ]; then
     . "$HOME/.profile"
+elif [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
 fi
 
 # Keybindings
