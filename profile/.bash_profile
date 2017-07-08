@@ -11,16 +11,8 @@ __clean_history() {
 
 # prompt always starts with a new line
 __cursor_correction() {
-    exec < /dev/tty
-    local oldstty=$(stty -g)
-    stty raw -echo min 0
-    echo -en "\033[6n" > /dev/tty
-    local pos
-    IFS=';' read -r -d R -a pos
-    stty $oldstty
-    col="$((${pos[1]} - 1))"
-
-    if [ $col != 0 ]; then
+    IFS=';' read -sdR -p $'\E[6n' row col
+    if [ $col -gt 1 ]; then
         echo ""
     fi
 }
