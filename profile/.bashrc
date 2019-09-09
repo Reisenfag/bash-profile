@@ -1,29 +1,10 @@
 #!/usr/bin/env bash
 
-# external tools activation
-__external_tools() {
-    # Pyenv activation
-    # set PATH so it includes pyenv's private bin if it exists
-    if [ -d "$HOME/.pyenv" ] ; then
-        export PYENV_ROOT="$HOME/.pyenv"
-        PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init -)"
-        eval "$(pyenv virtualenv-init -)"
-    fi
-#    if [ -e "venv" ]; then
-#        # Check to see if already activated to avoid redundant activating
-#        if [ "$VIRTUAL_ENV" != "$(pwd -P)/venv" ]; then
-#            source venv/bin/activate
-#            _OLD_VIRTUAL_PS1="$PS1"
-#            PS1="(venv) $PS1"
-#            export PS1
-#        fi
-#    fi
-}
+# Message in terminal title
+echo -ne "\033]0;Loading...\007"
 
 # If not running interactively, don't do anything
 if [[ $- != *i* ]]; then
-    __external_tools
     return
 fi
 
@@ -38,11 +19,35 @@ __clean_history() {
             return
         ;;
     esac
+
     history -a
-    histmp="$(tac "$HISTFILE")"
-    echo "$histmp" | sed "s/ *$//" | awk '!seen[$0]++' | tac > "$HISTFILE"
+
+    if [ ! -f "$HISTFILE" ]; then
+        touch "$HISTFILE"
+    fi
+
+    HISTTEMP="$(tac "$HISTFILE")"
+    echo "$HISTTEMP" | sed "s/ *$//" | awk '!seen[$0]++' | tac > "$HISTFILE"
+
     history -c
+
+    HISTFILE="$(__set_history_file)"
+
     history -r
+}
+
+# set local history
+__set_history_file() {
+    if [ -w "$(pwd)" ]; then
+        DIR="$(pwd)"
+    else
+        DIR="$HOME/.bash.d/history/$(pwd)"
+        if [ ! -d "$DIR/$(pwd)" ]; then
+            mkdir -p "$DIR/$(pwd)"
+        fi
+    fi
+
+    echo "$DIR/.bash_history"
 }
 
 # dynamic title for graphical terminals
@@ -105,6 +110,7 @@ bind '"\e[B": history-search-forward'
 alias ls='ls --color=auto'
 
 # history settings
+HISTFILE="$(__set_history_file)"
 HISTSIZE=10000
 HISTFILESIZE=10000
 HISTCONTROL=ignoreboth:erasedups
@@ -127,13 +133,10 @@ else
     PS1="$PS1\H"
     TITLE="\u@\H\a"
 fi
-PS1="\[\e]0;$TITLE\]$PS1\[\e[1;37m\]:\[\e[1;34m\]\w\[\e[m\]\n\[\e[1;37m\]>>\[\e[m\] "
+PS1="$PS1\[\e[1;37m\]:\[\e[1;34m\]\w\[\e[m\]\n\[\e[1;37m\]>>\[\e[m\] "
 PS2="\[\e[1;90m\]->\[\e[m\] "
 PROMPT_COMMAND="__smart_prompt;__clean_history;$PROMPT_COMMAND"
-#PROMPT_COMMAND="__clean_history;$PROMPT_COMMAND"
 
-# activate external tools
-__external_tools
 
 # remove dead and dublicated path from $PATH
 for check_path in `echo "${PATH//:/$'\n'}" | awk '!seen[$0]++'`; do
@@ -152,4 +155,3 @@ case "$TERM" in
     *)
     ;;
 esac
-
