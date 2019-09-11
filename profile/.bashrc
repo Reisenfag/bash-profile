@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# Message in terminal title
-echo -ne "\033]0;Loading...\007"
-
 # If not running interactively, don't do anything
 if [[ $- != *i* ]]; then
     return
 fi
+
+# Message in terminal title
+echo -ne "\033]0;Loading...\007"
 
 # immediately writes and reads history in file and removes duplicate commands
 __clean_history() {
@@ -62,12 +62,7 @@ __show_command_in_title() {
         ;;
     esac
 
-    if [ -n "${SSH_TTY}" ]; then
-        TITLE="${USER}@${HOSTNAME}: ${BASH_COMMAND}"
-    else
-        TITLE="${USER}@${HOSTNAME}: ${BASH_COMMAND}"
-    fi
-    echo -ne "\033]0;$TITLE\007"
+    echo -ne "\033]0;${USER}@${HOSTNAME}: ${BASH_COMMAND}\007"
 }
 
 # promt always starts with a new line
@@ -155,3 +150,7 @@ case "$TERM" in
     *)
     ;;
 esac
+
+# Message in terminal title
+echo -ne "\033]0;${USER}@${HOSTNAME}\007"
+
