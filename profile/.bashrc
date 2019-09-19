@@ -22,17 +22,13 @@ __clean_history() {
 
     history -a
 
-    if [ ! -f "$HISTFILE" ]; then
-        touch "$HISTFILE"
+    if [ -f "$HISTFILE" ]; then
+        HISTTEMP="$(tac "$HISTFILE")"
+        echo "$HISTTEMP" | sed "s/ *$//" | awk '!seen[$0]++' | tac > "$HISTFILE"
     fi
-
-    HISTTEMP="$(tac "$HISTFILE")"
-    echo "$HISTTEMP" | sed "s/ *$//" | awk '!seen[$0]++' | tac > "$HISTFILE"
-
-    history -c
-
     HISTFILE="$(__set_history_file)"
 
+    history -c
     history -r
 }
 
@@ -44,9 +40,11 @@ __set_history_file() {
         DIR="$HOME/.bash.d/history/$(pwd)"
         if [ ! -d "$DIR/$(pwd)" ]; then
             mkdir -p "$DIR/$(pwd)"
+            if [ -f "$DIR/.bash_history" ]; then
+                touch "$DIR/.bash_history"
+            fi
         fi
     fi
-
     echo "$DIR/.bash_history"
 }
 
