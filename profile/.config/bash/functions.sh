@@ -53,7 +53,7 @@ function __title_dynamic() {
 function __prompt_exit_fix() {
     # exit, if it not terminal
     [ -n "$MC_TMPDIR" ] && return
-    [ -n "$TERM_PROGRAM" ] && return
+    #[ -n "$TERM_PROGRAM" ] && return
     #[ -n "$PIPENV_ACTIVE" ] && echo ""; return
 
     fetch_cursor_position() {
