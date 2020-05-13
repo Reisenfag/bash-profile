@@ -9,8 +9,8 @@ __history_clean() {
         tac "$HISTFILE" > "$TEMPFILE"
         cat "$TEMPFILE" | sed "s/ *$//" | awk '!seen[$0]++' | tac > "$HISTFILE"
     fi
-    history -c
     HISTFILE="$(__history_local_switch)"
+    history -c
     history -r
     rm -f "$TEMPFILE"
 }
@@ -54,7 +54,7 @@ function __prompt_exit_fix() {
     # exit, if it not terminal
     [ -n "$MC_TMPDIR" ] && return
     [ -n "$TERM_PROGRAM" ] && return
-    [ -n "$PIPENV_ACTIVE" ] && echo ""; return
+    #[ -n "$PIPENV_ACTIVE" ] && echo ""; return
 
     fetch_cursor_position() {
         local pos
